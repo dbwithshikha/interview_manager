@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shikha's - Interview Manager</title>
+  <title>Interview Manager</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -55,6 +55,21 @@
       margin: 1rem 0;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #e74c3c;
+      border: none;
+      color: #fff;
+      padding: 0.3rem 0.7rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background-color: #c0392b;
     }
   </style>
 </head>
@@ -98,13 +113,26 @@
       return JSON.parse(localStorage.getItem('interviews')) || [];
     }
 
+    function deleteInterview(index) {
+      const interviews = loadInterviews();
+      interviews.splice(index, 1);
+      saveInterviews(interviews);
+      renderInterviews();
+    }
+
     function renderInterviews() {
       list.innerHTML = '';
       const interviews = loadInterviews().sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
-      interviews.forEach(({ company, date, time, level }) => {
+      interviews.forEach(({ company, date, time, level }, index) => {
         const card = document.createElement('div');
         card.className = 'interview-card';
-        card.innerHTML = `<strong>${company}</strong><br>Date: ${date}<br>Time: ${time}<br>Level: ${level}`;
+        card.innerHTML = `
+          <strong>${company}</strong><br>
+          Date: ${date}<br>
+          Time: ${time}<br>
+          Level: ${level}
+          <button class="delete-btn" onclick="deleteInterview(${index})">Delete</button>
+        `;
         list.appendChild(card);
       });
     }
